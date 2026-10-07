@@ -1,0 +1,37 @@
+@model ProjectForm
+@{
+    ViewData["Title"] = "Projeyi Düzenle";
+    var p = ViewBag.Project as Project;
+}
+<div class="admin-shell narrow">
+    <a href="/yonetim-8f42" class="back-link">← Proje yönetimine dön</a>
+    <h1>Projeyi Düzenle</h1>
+    <form method="post" enctype="multipart/form-data" class="admin-form">
+        @Html.AntiForgeryToken()
+        <partial name="_ProjectForm" model="Model" />
+        <div class="form-actions">
+            <a href="/yonetim-8f42" class="secondary-btn">Vazgeç</a>
+            <button class="primary-btn" type="submit">Değişiklikleri Kaydet</button>
+        </div>
+    </form>
+
+    @if (p != null && p.Fotograflar.Any())
+    {
+        <div class="photo-manager">
+            <h2>Mevcut Fotoğraflar</h2>
+            <div class="photo-grid">
+                @foreach (var f in p.Fotograflar)
+                {
+                    <div class="photo-item">
+                        <img src="/foto/@f.Id" alt="" />
+                        <form method="post" action="/yonetim-8f42/foto-sil/@f.Id" onsubmit="return confirm('Bu fotoğraf silinsin mi?');">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="projectId" value="@p.Id" />
+                            <button class="delete-btn" type="submit">Fotoğrafı Sil</button>
+                        </form>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

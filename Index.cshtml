@@ -1,0 +1,131 @@
+@model List<Project>
+@{
+    ViewData["Title"] = "Tamamlanan İnşaat Projeleri";
+    string Money(decimal v) => v.ToString("N0", new System.Globalization.CultureInfo("tr-TR")) + " ₺";
+}
+<header class="topbar">
+    <div class="wrap nav">
+        <a class="brand" href="/">
+            <span class="brand-icon">▦</span>
+            <span>Tamamlanan İnşaat Projeleri</span>
+        </a>
+        <nav>
+            <a href="#anasayfa" class="active">Ana Sayfa</a>
+            <a href="#projeler">Projeler</a>
+            <a href="#hakkimizda">Hakkımızda</a>
+            <a href="#iletisim">İletişim</a>
+        </nav>
+    </div>
+</header>
+
+<section id="anasayfa" class="hero">
+    <img src="/images/banner.jpg" alt="Tamamlanan inşaat projeleri" />
+    <div class="hero-shade"></div>
+    <div class="hero-copy">
+        <span class="hero-line"></span>
+        <h1>Tamamlanan<br />İnşaat Projelerimiz</h1>
+        <p>Daha güçlü eğitim altyapısı,<br />daha aydınlık yarınlar için...</p>
+    </div>
+</section>
+
+<main id="projeler" class="wrap content">
+    <div class="search-row">
+        <div class="search-box">
+            <span>⌕</span>
+            <input id="projectSearch" type="search" placeholder="Proje adına göre ara..." autocomplete="off" />
+        </div>
+        <button type="button" class="search-button" onclick="filterProjects()">Ara</button>
+    </div>
+
+    <div id="projectGrid" class="project-grid">
+        @foreach (var p in Model)
+        {
+            <article class="project-card" data-name="@p.ProjeAdi.ToLowerInvariant()">
+                <div class="slider" data-slider>
+                    @if (p.Fotograflar.Any())
+                    {
+                        for (var i=0; i<p.Fotograflar.Count; i++)
+                        {
+                            <img class="slide @(i==0?"active":"")" src="/foto/@p.Fotograflar[i].Id" alt="@p.ProjeAdi" />
+                        }
+                        if (p.Fotograflar.Count > 1)
+                        {
+                            <button class="slide-nav prev" type="button" aria-label="Önceki">‹</button>
+                            <button class="slide-nav next" type="button" aria-label="Sonraki">›</button>
+                            <div class="dots">
+                                @for(var i=0;i<p.Fotograflar.Count;i++){<span class="dot @(i==0?"active":"")"></span>}
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="no-photo">Fotoğraf yok</div>
+                    }
+                </div>
+                <div class="card-body">
+                    <h2>@p.ProjeAdi</h2>
+                    <p class="summary">@p.ProjeAciklamasi</p>
+                    <div class="card-footer">
+                        <div class="value">
+                            <span class="coin">◉</span>
+                            <div><small>Proje Değeri</small><strong>@Money(p.ProjeDegeri)</strong></div>
+                        </div>
+                        <button type="button" class="detail-btn" onclick="openModal('modal-@p.Id')">Detayları Gör</button>
+                    </div>
+                </div>
+            </article>
+
+            <div id="modal-@p.Id" class="modal" aria-hidden="true">
+                <div class="modal-backdrop" onclick="closeModal('modal-@p.Id')"></div>
+                <div class="modal-panel">
+                    <button class="modal-close" onclick="closeModal('modal-@p.Id')" aria-label="Kapat">×</button>
+                    <h2>@p.ProjeAdi</h2>
+                    <div class="modal-slider slider" data-slider>
+                        @if (p.Fotograflar.Any())
+                        {
+                            for (var i=0; i<p.Fotograflar.Count; i++)
+                            {
+                                <img class="slide @(i==0?"active":"")" src="/foto/@p.Fotograflar[i].Id" alt="@p.ProjeAdi" />
+                            }
+                            if (p.Fotograflar.Count > 1)
+                            {
+                                <button class="slide-nav prev" type="button">‹</button>
+                                <button class="slide-nav next" type="button">›</button>
+                                <div class="dots">
+                                    @for(var i=0;i<p.Fotograflar.Count;i++){<span class="dot @(i==0?"active":"")"></span>}
+                                </div>
+                            }
+                        }
+                    </div>
+                    @if (p.Fotograflar.Count > 1)
+                    {
+                        <div class="thumbs">
+                            @for(var i=0;i<p.Fotograflar.Count;i++)
+                            {
+                                <img src="/foto/@p.Fotograflar[i].Id" alt="" onclick="goToSlide(this, @i)" />
+                            }
+                        </div>
+                    }
+                    <div class="detail-table">
+                        <div><b>Proje Adı</b><span>@p.ProjeAdi</span></div>
+                        <div><b>Proje Açıklaması</b><span>@p.ProjeAciklamasi</span></div>
+                        <div><b>Proje Değeri</b><span class="money">@Money(p.ProjeDegeri)</span></div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <section id="hakkimizda" class="info-section">
+        <h2>Hakkımızda</h2>
+        <p>Tamamlanan yapım işlerinin kamuoyuna sade, görsel ve erişilebilir biçimde sunulması amacıyla hazırlanmış proje vitrini.</p>
+    </section>
+    <section id="iletisim" class="info-section">
+        <h2>İletişim</h2>
+        <p>İletişim bilgileri daha sonra yönetim tarafından eklenebilir.</p>
+    </section>
+</main>
+
+<footer>
+    <div class="wrap">© @DateTime.Now.Year Tamamlanan İnşaat Projeleri</div>
+</footer>

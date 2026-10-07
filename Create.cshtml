@@ -1,0 +1,14 @@
+@model ProjectForm
+@{ ViewData["Title"] = "Yeni Proje"; }
+<div class="admin-shell narrow">
+    <a href="/yonetim-8f42" class="back-link">← Proje yönetimine dön</a>
+    <h1>Yeni Proje Ekle</h1>
+    <form method="post" enctype="multipart/form-data" class="admin-form">
+        @Html.AntiForgeryToken()
+        <partial name="_ProjectForm" model="Model" />
+        <div class="form-actions">
+            <a href="/yonetim-8f42" class="secondary-btn">Vazgeç</a>
+            <button class="primary-btn" type="submit">Projeyi Kaydet</button>
+        </div>
+    </form>
+</div>

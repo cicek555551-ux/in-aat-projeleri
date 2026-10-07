@@ -1,0 +1,48 @@
+@model List<Project>
+@{
+    ViewData["Title"] = "Proje Yönetimi";
+    string Money(decimal v) => v.ToString("N0", new System.Globalization.CultureInfo("tr-TR")) + " ₺";
+}
+<div class="admin-shell">
+    <div class="admin-head">
+        <div>
+            <a href="/" class="back-link">← Siteye dön</a>
+            <h1>Proje Yönetimi</h1>
+            <p>Yeni proje ekleyebilir, mevcut projeleri düzenleyebilir veya silebilirsiniz.</p>
+        </div>
+        <a class="primary-btn" href="/yonetim-8f42/yeni">+ Yeni Proje Ekle</a>
+    </div>
+
+    @if (TempData["Ok"] is string msg)
+    {
+        <div class="alert-ok">@msg</div>
+    }
+
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead><tr><th>Proje</th><th>Değer</th><th>Fotoğraf</th><th>İşlemler</th></tr></thead>
+            <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="admin-project">
+                            @if (p.Fotograflar.Any()){<img src="/foto/@p.Fotograflar[0].Id" alt="" />}
+                            <div><strong>@p.ProjeAdi</strong><small>@p.ProjeAciklamasi</small></div>
+                        </div>
+                    </td>
+                    <td>@Money(p.ProjeDegeri)</td>
+                    <td>@p.Fotograflar.Count</td>
+                    <td class="actions">
+                        <a class="edit-btn" href="/yonetim-8f42/duzenle/@p.Id">Düzenle</a>
+                        <form method="post" action="/yonetim-8f42/sil/@p.Id" onsubmit="return confirm('Bu projeyi ve tüm fotoğraflarını silmek istediğinize emin misiniz?');">
+                            @Html.AntiForgeryToken()
+                            <button class="delete-btn" type="submit">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
